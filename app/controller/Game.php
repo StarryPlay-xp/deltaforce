@@ -375,7 +375,13 @@ class Game
 
     public function guns(): Json
     {
-        $params = Request::only(['gunId']);
+        $params = Request::only(['gunId', 'openid', 'access_token']);
+        
+        // 检查必需的认证参数
+        if (empty($params['openid']) || empty($params['access_token'])) {
+            return Response::json(-1, '缺少参数');
+        }
+        
         $cookie = $this->createCookie($params['openid'], $params['access_token']);
         $response = $this->client->request('POST', 'https://comm.ams.game.qq.com/ide/', [
             'form_params' => [
